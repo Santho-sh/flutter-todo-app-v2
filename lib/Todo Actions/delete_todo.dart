@@ -13,15 +13,6 @@ class DeleteTodo extends StatelessWidget {
 
     return IconButton(
       icon: const Icon(Icons.delete_outline_rounded),
-      style: IconButton.styleFrom(
-        iconSize: 20,
-        foregroundColor: colors.onSecondaryContainer,
-        backgroundColor: colors.secondaryContainer,
-        disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-        hoverColor: colors.onSecondaryContainer.withOpacity(0.08),
-        focusColor: colors.onSecondaryContainer.withOpacity(0.12),
-        highlightColor: colors.onSecondaryContainer.withOpacity(0.12),
-      ),
       onPressed: () {
         showDialog(
           context: context,

@@ -11,7 +11,13 @@ class AddTodo extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return FloatingActionButton(
-      child: const Icon(Icons.add_rounded),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      child: const Icon(
+        Icons.add_rounded,
+        size: 35,
+      ),
       onPressed: () {
         showDialog(
           context: context,

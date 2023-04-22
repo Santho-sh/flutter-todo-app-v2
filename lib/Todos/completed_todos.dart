@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app_v2/Todo%20Actions/delete_todo.dart';
 import '../App State/app_state.dart';
 
 class CompletedTodos extends StatelessWidget {
@@ -8,34 +9,21 @@ class CompletedTodos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
-    final ColorScheme colors = Theme.of(context).colorScheme;
 
     if (appState.completedTodos.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return ReorderableListView(
-      shrinkWrap: true,
-      header: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Center(
-          child: Text(
-            "Completed",
-            style: TextStyle(fontSize: 20),
-          ),
-        ),
-      ),
-      padding: const EdgeInsets.all(8.0),
-      onReorder: (oldIndex, newIndex) =>
-          appState.changeCompletedIndex(oldIndex, newIndex),
-      children: [
+    return ExpansionTile(
+      title: const Text("Completed"),
+      children: <Widget>[
         for (var activeTodo in appState.completedTodos)
           ListTile(
             shape: RoundedRectangleBorder(
               side: const BorderSide(width: 2),
               borderRadius: BorderRadius.circular(20),
             ),
-            tileColor: const Color.fromARGB(255, 35, 35, 35),
+            tileColor: const Color.fromARGB(255, 26, 26, 26),
             key: UniqueKey(),
             leading: const Icon(Icons.adjust),
             title: Row(
@@ -46,20 +34,7 @@ class CompletedTodos extends StatelessWidget {
                     style: const TextStyle(fontSize: 20),
                   ),
                 ),
-                IconButton(
-                  onPressed: () => appState.deleteTodo(activeTodo),
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  style: IconButton.styleFrom(
-                    iconSize: 20,
-                    foregroundColor: colors.onSecondaryContainer,
-                    backgroundColor: colors.secondaryContainer,
-                    disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-                    hoverColor: colors.onSecondaryContainer.withOpacity(0.08),
-                    focusColor: colors.onSecondaryContainer.withOpacity(0.12),
-                    highlightColor:
-                        colors.onSecondaryContainer.withOpacity(0.12),
-                  ),
-                )
+                DeleteTodo(todo: activeTodo),
               ],
             ),
           ),

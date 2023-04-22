@@ -15,6 +15,7 @@ class ActiveTodos extends StatelessWidget {
     }
 
     return ReorderableListView(
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: const EdgeInsets.all(8.0),
       onReorder: (oldIndex, newIndex) =>
