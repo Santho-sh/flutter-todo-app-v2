@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'app_state.dart';
+import '../App State/app_state.dart';
 
 class CompletedTodos extends StatelessWidget {
   const CompletedTodos({super.key});
@@ -10,7 +10,12 @@ class CompletedTodos extends StatelessWidget {
     var appState = Provider.of<AppState>(context);
     final ColorScheme colors = Theme.of(context).colorScheme;
 
+    if (appState.completedTodos.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return ReorderableListView(
+      shrinkWrap: true,
       header: const Padding(
         padding: EdgeInsets.all(8.0),
         child: Center(
@@ -31,7 +36,7 @@ class CompletedTodos extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             tileColor: const Color.fromARGB(255, 35, 35, 35),
-            key: ValueKey(activeTodo),
+            key: UniqueKey(),
             leading: const Icon(Icons.adjust),
             title: Row(
               children: [

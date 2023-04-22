@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'app_state.dart';
-import 'add_todo.dart';
+import 'Home Page/todos_list_view.dart';
+import 'App State/app_state.dart';
+import 'Todo Actions/add_todo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -56,9 +57,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
           foregroundColor: colors.primary,
           backgroundColor: appState.currentTheme,
-          title: const Text('ToDo'),
+          title: const Text('To Do'),
           leading: const Icon(Icons.toll_outlined)),
-      body: const HomePage(),
+      body: const ActiveTodos(),
       floatingActionButton: const AddTodo(),
     );
   }

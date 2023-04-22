@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'app_state.dart';
+import '../App State/app_state.dart';
 
 class DeleteTodo extends StatelessWidget {
   const DeleteTodo({super.key, required this.todo});

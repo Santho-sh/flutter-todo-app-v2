@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'app_state.dart';
+import '../App State/app_state.dart';
 
 class AddTodo extends StatelessWidget {
   const AddTodo({super.key});
@@ -20,6 +20,7 @@ class AddTodo extends StatelessWidget {
             var myController = TextEditingController();
 
             return AlertDialog(
+              backgroundColor: Colors.black87,
               scrollable: true,
               title: const Text("New Task"),
               content: Padding(

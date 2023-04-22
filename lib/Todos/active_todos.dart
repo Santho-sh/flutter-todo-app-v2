@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'app_state.dart';
+import '../App State/app_state.dart';
 
 class Todo extends StatelessWidget {
   const Todo({super.key});
@@ -10,7 +10,12 @@ class Todo extends StatelessWidget {
     var appState = Provider.of<AppState>(context);
     final ColorScheme colors = Theme.of(context).colorScheme;
 
+    if (appState.activeTodos.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return ReorderableListView(
+      shrinkWrap: true,
       padding: const EdgeInsets.all(8.0),
       onReorder: (oldIndex, newIndex) =>
           appState.changeIndex(oldIndex, newIndex),
@@ -21,8 +26,8 @@ class Todo extends StatelessWidget {
               side: const BorderSide(width: 2),
               borderRadius: BorderRadius.circular(20),
             ),
-            tileColor: const Color.fromARGB(255, 35, 35, 35),
-            key: ValueKey(activeTodo),
+            tileColor: const Color.fromARGB(255, 26, 26, 26),
+            key: UniqueKey(),
             leading: const Icon(Icons.adjust),
             title: Row(
               children: [
