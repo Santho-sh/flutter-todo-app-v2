@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../App State/app_state.dart';
 
-class Todo extends StatelessWidget {
-  const Todo({super.key});
+class ActiveTodos extends StatelessWidget {
+  const ActiveTodos({super.key});
 
   @override
   Widget build(BuildContext context) {
