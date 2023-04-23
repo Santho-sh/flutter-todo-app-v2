@@ -51,10 +51,24 @@ class AppState extends ChangeNotifier {
     return 0;
   }
 
+  int addCompletedTodo(String todo) {
+    if (todo.trim() != "") {
+      completedTodos.add(todo.trim());
+      prefs.setStringList("completedTodos", completedTodos);
+      notifyListeners();
+      return 1;
+    }
+    return 0;
+  }
+
   void removeTodo(String todo) {
-    if (todo.contains(todo)) {
+    if (activeTodos.contains(todo)) {
       activeTodos.remove(todo);
       prefs.setStringList("activeTodos", activeTodos);
+      notifyListeners();
+    } else if (completedTodos.contains(todo)) {
+      completedTodos.remove(todo);
+      prefs.setStringList("completedTodos", completedTodos);
       notifyListeners();
     }
   }

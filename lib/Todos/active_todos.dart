@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../App State/app_state.dart';
+import '../Todo Actions/slide_left_background.dart';
 
 class ActiveTodos extends StatelessWidget {
   const ActiveTodos({super.key});
@@ -22,33 +23,56 @@ class ActiveTodos extends StatelessWidget {
           appState.changeIndex(oldIndex, newIndex),
       children: [
         for (var activeTodo in appState.activeTodos)
-          ListTile(
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(width: 1),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            tileColor: const Color.fromARGB(255, 26, 26, 26),
+          Dismissible(
+            background: const SlideLeftBackground(),
             key: UniqueKey(),
-            leading: Radio(
-              value: false,
-              groupValue: true,
-              toggleable: true,
-              onChanged: (bool? newValue) =>
-                  {appState.markComplete(activeTodo)},
-            ),
-            title: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    activeTodo,
-                    style: const TextStyle(),
+            direction: DismissDirection.endToStart,
+            onDismissed: (_) {
+              appState.removeTodo(activeTodo);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: const Color.fromARGB(255, 26, 26, 26),
+                  content: const Text(
+                    "Task deleted",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  action: SnackBarAction(
+                    label: "UNDO",
+                    onPressed: () {
+                      appState.addTodo(activeTodo);
+                    },
                   ),
                 ),
-                IconButton(
-                  onPressed: () => appState.markComplete(activeTodo),
-                  icon: const Icon(Icons.star_border_rounded),
-                )
-              ],
+              );
+            },
+            child: ListTile(
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              tileColor: const Color.fromARGB(255, 26, 26, 26),
+              key: UniqueKey(),
+              leading: Radio(
+                value: false,
+                groupValue: true,
+                toggleable: true,
+                onChanged: (bool? newValue) =>
+                    {appState.markComplete(activeTodo)},
+              ),
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      activeTodo,
+                      style: const TextStyle(),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => appState.markComplete(activeTodo),
+                    icon: const Icon(Icons.star_border_rounded),
+                  )
+                ],
+              ),
             ),
           ),
       ],
