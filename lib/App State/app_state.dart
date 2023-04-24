@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'theme_shared_preferences.dart';
 
 class AppState extends ChangeNotifier {
+  late bool _isDark;
   late SharedPreferences prefs;
+  late ThemeSharedPreferences themeSharedPreferences;
+
+  bool get isDark => _isDark;
+
   var activeTodos = <String>[];
   var completedTodos = <String>[];
 
@@ -10,6 +16,20 @@ class AppState extends ChangeNotifier {
 
   AppState() {
     initState();
+    _isDark = false;
+    themeSharedPreferences = ThemeSharedPreferences();
+    getThemePreferences();
+  }
+
+  set isDark(bool value) {
+    _isDark = value;
+    themeSharedPreferences.setTheme(value);
+    notifyListeners();
+  }
+
+  getThemePreferences() async {
+    _isDark = await themeSharedPreferences.getTheme();
+    notifyListeners();
   }
 
   void changeIndex(oldIndex, newIndex) {

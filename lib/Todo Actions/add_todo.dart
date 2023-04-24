@@ -35,6 +35,8 @@ class AddTodo extends StatelessWidget {
                   child: Column(
                     children: [
                       TextFormField(
+                        autocorrect: true,
+                        autofocus: true,
                         controller: myController,
                         decoration: const InputDecoration(
                           labelText: "Task",

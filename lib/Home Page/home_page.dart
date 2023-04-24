@@ -17,15 +17,28 @@ class _HomePageState extends State<HomePage> {
     final ColorScheme colors = Theme.of(context).colorScheme;
     var appState = Provider.of<AppState>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: colors.primary,
-        backgroundColor: appState.currentTheme,
-        title: const Text('To Do'),
-        leading: const Icon(Icons.toll_outlined),
-      ),
-      body: const Todos(),
-      floatingActionButton: const AddTodo(),
+    return Consumer(
+      builder: (context, AppState themeNotifier, child) {
+        return Scaffold(
+          appBar: AppBar(
+            foregroundColor: colors.primary,
+            backgroundColor: appState.currentTheme,
+            title: const Text('To Do'),
+            titleSpacing: 30,
+            actions: [
+              themeNotifier.isDark
+                  ? IconButton(
+                      onPressed: () => themeNotifier.isDark = false,
+                      icon: const Icon(Icons.wb_sunny_outlined))
+                  : IconButton(
+                      onPressed: () => themeNotifier.isDark = true,
+                      icon: const Icon(Icons.mode_night_outlined))
+            ],
+          ),
+          body: const Todos(),
+          floatingActionButton: const AddTodo(),
+        );
+      },
     );
   }
 }
