@@ -26,13 +26,12 @@ class _HomePageState extends State<HomePage> {
             title: const Text('To Do'),
             titleSpacing: 30,
             actions: [
-              themeNotifier.isDark
-                  ? IconButton(
-                      onPressed: () => themeNotifier.isDark = false,
-                      icon: const Icon(Icons.wb_sunny_outlined))
-                  : IconButton(
-                      onPressed: () => themeNotifier.isDark = true,
-                      icon: const Icon(Icons.mode_night_outlined))
+              IconButton(
+                  onPressed: () => themeNotifier.isDark =
+                      themeNotifier.isDark ? false : true,
+                  icon: themeNotifier.isDark
+                      ? const Icon(Icons.wb_sunny_outlined)
+                      : const Icon(Icons.mode_night_outlined))
             ],
           ),
           body: const Todos(),
