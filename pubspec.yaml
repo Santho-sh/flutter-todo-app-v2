@@ -50,7 +50,6 @@ flutter_icons:
   image_path: "assets/icon.png"
   android: true
   ios: true
-  web: true
 
 dev_dependencies:
   flutter_test:
