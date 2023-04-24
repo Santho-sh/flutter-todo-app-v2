@@ -66,7 +66,7 @@ class CompletedTodos extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => appState.markComplete(completedTodo),
+                    onPressed: () => {},
                     icon: const Icon(Icons.star_border_rounded),
                   )
                 ],

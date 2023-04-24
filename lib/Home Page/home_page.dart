@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    var appState = Provider.of<AppState>(context);
 
     return Consumer(
       builder: (context, AppState themeNotifier, child) {
@@ -27,6 +26,9 @@ class _HomePageState extends State<HomePage> {
             titleSpacing: 30,
             actions: [
               IconButton(
+                  style: const ButtonStyle(
+                      padding:
+                          MaterialStatePropertyAll(EdgeInsets.only(right: 30))),
                   onPressed: () => themeNotifier.isDark =
                       themeNotifier.isDark ? false : true,
                   icon: themeNotifier.isDark
