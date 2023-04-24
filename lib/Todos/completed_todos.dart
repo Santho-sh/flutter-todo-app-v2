@@ -26,6 +26,7 @@ class CompletedTodos extends StatelessWidget {
       children: <Widget>[
         for (var completedTodo in appState.completedTodos)
           Dismissible(
+            
             background: const SlideLeftBackground(),
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
@@ -70,7 +71,8 @@ class CompletedTodos extends StatelessWidget {
                   Expanded(
                     child: Text(
                       completedTodo,
-                      style: const TextStyle(),
+                      style: const TextStyle(
+                          decoration: TextDecoration.lineThrough),
                     ),
                   ),
                   IconButton(
