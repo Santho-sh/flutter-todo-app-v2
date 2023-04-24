@@ -15,10 +15,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => AppState(),
-      child: MaterialApp(
-        title: 'Tasks',
-        theme: _buildTheme(Brightness.dark),
-        home: const HomePage(),
+      child: Consumer(
+        builder: (context, AppState themeModel, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Tasks',
+            theme: themeModel.isDark
+                ? _buildTheme(Brightness.dark)
+                : _buildTheme(Brightness.light),
+            home: const HomePage(),
+          );
+        },
       ),
     );
   }
@@ -27,14 +34,29 @@ class MyApp extends StatelessWidget {
 ThemeData _buildTheme(brightness) {
   var baseTheme = ThemeData(brightness: brightness);
 
-  return baseTheme.copyWith(
-    canvasColor: Colors.transparent,
-    shadowColor: Colors.transparent,
-    scaffoldBackgroundColor: Colors.black,
-    textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme),
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color.fromARGB(255, 0, 94, 255),
-        brightness: Brightness.dark),
-  );
+  if (brightness == Brightness.dark) {
+    return baseTheme.copyWith(
+      scaffoldBackgroundColor: Colors.black,
+      textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme),
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+          secondary: const Color.fromARGB(255, 26, 26, 26),
+          onSecondary: Colors.white,
+          background: Colors.black,
+          seedColor: const Color.fromARGB(255, 0, 94, 255),
+          brightness: Brightness.dark),
+    );
+  } else {
+    return baseTheme.copyWith(
+      scaffoldBackgroundColor: Colors.white,
+      textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme),
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+          secondary: const Color.fromARGB(255, 232, 231, 231),
+          onSecondary: Colors.black,
+          background: Colors.white,
+          seedColor: const Color.fromARGB(255, 0, 94, 255),
+          brightness: Brightness.light),
+    );
+  }
 }

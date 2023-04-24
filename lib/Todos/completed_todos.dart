@@ -9,6 +9,7 @@ class CompletedTodos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
+    final ColorScheme colors = Theme.of(context).colorScheme;
 
     if (appState.completedTodos.isEmpty) {
       return const SizedBox.shrink();
@@ -28,13 +29,14 @@ class CompletedTodos extends StatelessWidget {
               appState.removeTodo(completedTodo);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: const Color.fromARGB(255, 26, 26, 26),
-                  content: const Text(
+                  backgroundColor: colors.secondary,
+                  content: Text(
                     "Task deleted",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: colors.onSecondary),
                   ),
                   action: SnackBarAction(
                     label: "UNDO",
+                    textColor: Colors.green,
                     onPressed: () {
                       appState.addCompletedTodo(completedTodo);
                     },
@@ -44,10 +46,10 @@ class CompletedTodos extends StatelessWidget {
             },
             child: ListTile(
               shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1),
+                side: BorderSide(width: 1, color: colors.background),
                 borderRadius: BorderRadius.circular(5),
               ),
-              tileColor: const Color.fromARGB(255, 26, 26, 26),
+              tileColor: colors.secondary,
               key: UniqueKey(),
               leading: Radio(
                 value: true,

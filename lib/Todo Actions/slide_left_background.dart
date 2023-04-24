@@ -5,19 +5,20 @@ class SlideLeftBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
     return Container(
-      color: Colors.red,
+      color: colors.errorContainer,
       child: Align(
         alignment: Alignment.centerRight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: const <Widget>[
+          children: [
             Icon(
               Icons.delete,
-              color: Colors.white,
+              color: colors.onErrorContainer,
             ),
-
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
           ],

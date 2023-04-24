@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
         return Scaffold(
           appBar: AppBar(
             foregroundColor: colors.primary,
-            backgroundColor: appState.currentTheme,
+            backgroundColor: colors.background,
             title: const Text('To Do'),
             titleSpacing: 30,
             actions: [

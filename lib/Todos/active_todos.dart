@@ -31,10 +31,10 @@ class ActiveTodos extends StatelessWidget {
               appState.removeTodo(activeTodo);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: const Color.fromARGB(255, 26, 26, 26),
-                  content: const Text(
+                  backgroundColor: colors.secondary,
+                  content: Text(
                     "Task deleted",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: colors.onSecondary),
                   ),
                   action: SnackBarAction(
                     label: "UNDO",
@@ -47,10 +47,10 @@ class ActiveTodos extends StatelessWidget {
             },
             child: ListTile(
               shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1),
+                side: BorderSide(width: 1, color: colors.background),
                 borderRadius: BorderRadius.circular(5),
               ),
-              tileColor: const Color.fromARGB(255, 26, 26, 26),
+              tileColor: colors.secondary,
               key: UniqueKey(),
               leading: Radio(
                 value: false,
@@ -64,7 +64,7 @@ class ActiveTodos extends StatelessWidget {
                   Expanded(
                     child: Text(
                       activeTodo,
-                      style: const TextStyle(),
+                      style: TextStyle(color: colors.onSecondary),
                     ),
                   ),
                   IconButton(

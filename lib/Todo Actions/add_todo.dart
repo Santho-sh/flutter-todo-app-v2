@@ -26,7 +26,7 @@ class AddTodo extends StatelessWidget {
             var myController = TextEditingController();
 
             return AlertDialog(
-              backgroundColor: Colors.black87,
+              backgroundColor: colors.secondary,
               scrollable: true,
               title: const Text("New Task"),
               content: Padding(
