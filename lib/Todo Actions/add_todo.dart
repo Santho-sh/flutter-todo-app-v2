@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../App State/app_state.dart';
 
@@ -51,6 +52,7 @@ class AddTodo extends StatelessWidget {
                 FilledButton.tonal(
                   child: const Text("Add"),
                   onPressed: () {
+                    HapticFeedback.lightImpact();
                     int added = appState.addTodo(myController.text);
                     Navigator.pop(context, false);
                     if (added == 1) {

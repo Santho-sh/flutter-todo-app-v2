@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../App State/app_state.dart';
 import 'package:todo_app_v2/Todo Actions/slide_left_background.dart';
@@ -16,6 +17,9 @@ class CompletedTodos extends StatelessWidget {
     }
 
     return ExpansionTile(
+      onExpansionChanged: (_) {
+        HapticFeedback.lightImpact();
+      },
       controlAffinity: ListTileControlAffinity.leading,
       childrenPadding: const EdgeInsets.only(left: 8, right: 8),
       title: const Text("Completed"),
@@ -26,7 +30,9 @@ class CompletedTodos extends StatelessWidget {
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             onDismissed: (_) {
+              HapticFeedback.mediumImpact();
               appState.removeTodo(completedTodo);
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   backgroundColor: colors.secondary,
@@ -36,7 +42,6 @@ class CompletedTodos extends StatelessWidget {
                   ),
                   action: SnackBarAction(
                     label: "UNDO",
-                    textColor: Colors.green,
                     onPressed: () {
                       appState.addCompletedTodo(completedTodo);
                     },
@@ -55,7 +60,10 @@ class CompletedTodos extends StatelessWidget {
                 value: true,
                 groupValue: true,
                 toggleable: true,
-                onChanged: (_) => {appState.markUncomplete(completedTodo)},
+                onChanged: (_) => {
+                  appState.markUncomplete(completedTodo),
+                  HapticFeedback.lightImpact(),
+                },
               ),
               title: Row(
                 children: [
@@ -66,7 +74,7 @@ class CompletedTodos extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => {},
+                    onPressed: () => {HapticFeedback.lightImpact()},
                     icon: const Icon(Icons.star_border_rounded),
                   )
                 ],

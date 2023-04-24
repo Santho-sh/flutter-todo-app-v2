@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../App State/app_state.dart';
 import '../Todo Actions/slide_left_background.dart';
+import 'package:flutter/services.dart';
 
 class ActiveTodos extends StatelessWidget {
   const ActiveTodos({super.key});
@@ -28,6 +29,7 @@ class ActiveTodos extends StatelessWidget {
             key: UniqueKey(),
             direction: DismissDirection.endToStart,
             onDismissed: (_) {
+              HapticFeedback.mediumImpact();
               appState.removeTodo(activeTodo);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -38,7 +40,7 @@ class ActiveTodos extends StatelessWidget {
                   ),
                   action: SnackBarAction(
                     label: "UNDO",
-                    onPressed: () {
+                    onPressed: () async {
                       appState.addTodo(activeTodo);
                     },
                   ),
@@ -56,8 +58,10 @@ class ActiveTodos extends StatelessWidget {
                 value: false,
                 groupValue: true,
                 toggleable: true,
-                onChanged: (bool? newValue) =>
-                    {appState.markComplete(activeTodo)},
+                onChanged: (bool? newValue) => {
+                  appState.markComplete(activeTodo),
+                  HapticFeedback.lightImpact()
+                },
               ),
               title: Row(
                 children: [
@@ -68,7 +72,7 @@ class ActiveTodos extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => {},
+                    onPressed: () => {HapticFeedback.mediumImpact()},
                     icon: const Icon(Icons.star_border_rounded),
                   )
                 ],
