@@ -13,10 +13,8 @@ class Todos extends StatelessWidget {
     var appState = Provider.of<AppState>(context);
 
     // If todo lists is empty
-    if (appState.activeStaredTodos.isEmpty &&
-        appState.activeUnstaredTodos.isEmpty &&
-        appState.completedStaredTodos.isEmpty &&
-        appState.completedUnstaredTodos.isEmpty) {
+    if (appState.activeTodos.isEmpty &&
+        appState.completedTodos.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

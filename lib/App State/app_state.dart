@@ -11,10 +11,8 @@ class AppState extends ChangeNotifier {
   late ThemeSharedPreferences themeSharedPreferences;
   bool get isDark => _isDark;
 
-  List<Todo> activeStaredTodos = [];
-  List<Todo> activeUnstaredTodos = [];
-  List<Todo> completedStaredTodos = [];
-  List<Todo> completedUnstaredTodos = [];
+  List<Todo> activeTodos = [];
+  List<Todo> completedTodos = [];
 
   Color currentTheme = Colors.black;
 
@@ -41,14 +39,9 @@ class AppState extends ChangeNotifier {
   }
 
   void getTodos() async {
-    activeStaredTodos =
-        (await TodosDatabase.instance.activeStaredTodos()) ?? [];
-    activeUnstaredTodos =
-        (await TodosDatabase.instance.activeUnstaredTodos()) ?? [];
-    completedStaredTodos =
-        (await TodosDatabase.instance.completedStaredTodos()) ?? [];
-    completedUnstaredTodos =
-        (await TodosDatabase.instance.completedUnstaredTodos()) ?? [];
+    activeTodos = (await TodosDatabase.instance.activeTodos()) ?? [];
+    completedTodos =
+        (await TodosDatabase.instance.completedTodos()) ?? [];
     notifyListeners();
   }
 

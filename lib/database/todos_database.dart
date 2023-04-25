@@ -79,31 +79,31 @@ class TodosDatabase {
       tableTodos,
       columns: TodoFields.values,
       where: '${TodoFields.sortOrder} = ?',
-      whereArgs: [oldIndex],
+      whereArgs: [newIndex],
     );
 
     final query2 = await db.query(
       tableTodos,
       columns: TodoFields.values,
       where: '${TodoFields.sortOrder} = ?',
-      whereArgs: [newIndex],
+      whereArgs: [oldIndex],
     );
 
-    final todo = Todo.fromJson(query1.first);
-    final newIndexTodo = Todo.fromJson(query2.first);
+    final newIndexTodo = Todo.fromJson(query1.first);
+    final oldIndexTodo = Todo.fromJson(query2.first);
 
-    db.update(
+    await db.update(
       tableTodos,
       newIndexTodo.copy(sortOrder: oldIndex).toJson(),
       where: '${TodoFields.sortOrder} = ?',
-      whereArgs: [newIndex],
+      whereArgs: [oldIndex],
     );
 
-    db.update(
+    await db.update(
       tableTodos,
-      todo.copy(sortOrder: newIndex).toJson(),
-      where: '${TodoFields.id} = ?',
-      whereArgs: [todo.id],
+      oldIndexTodo.copy(sortOrder: newIndex).toJson(),
+      where: '${TodoFields.sortOrder} = ?',
+      whereArgs: [newIndex],
     );
   }
 
@@ -115,16 +115,16 @@ class TodosDatabase {
         .delete(tableTodos, where: '${TodoFields.id} = ?', whereArgs: [id]);
   }
 
-  // Active Unstared Todos
-  Future<List<Todo>?> activeUnstaredTodos() async {
+  // Active Todos
+  Future<List<Todo>?> activeTodos() async {
     final db = await instance.database;
 
     final query = await db.query(
       tableTodos,
       columns: TodoFields.values,
-      where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
+      where: '${TodoFields.isCompleted} = ?',
       orderBy: TodoFields.sortOrder,
-      whereArgs: [0, 0],
+      whereArgs: [0],
     );
 
     if (query.isNotEmpty) {
@@ -134,54 +134,16 @@ class TodosDatabase {
     }
   }
 
-  // Active Stared Todos
-  Future<List<Todo>?> activeStaredTodos() async {
+  // Completed Todos
+  Future<List<Todo>?> completedTodos() async {
     final db = await instance.database;
 
     final query = await db.query(
       tableTodos,
       columns: TodoFields.values,
-      where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
+      where: '${TodoFields.isCompleted} = ?',
       orderBy: TodoFields.sortOrder,
-      whereArgs: [0, 1],
-    );
-
-    if (query.isNotEmpty) {
-      return query.map((json) => Todo.fromJson(json)).toList();
-    } else {
-      return null;
-    }
-  }
-
-  // Completed Unstared Todos
-  Future<List<Todo>?> completedUnstaredTodos() async {
-    final db = await instance.database;
-
-    final query = await db.query(
-      tableTodos,
-      columns: TodoFields.values,
-      where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
-      orderBy: TodoFields.sortOrder,
-      whereArgs: [1, 0],
-    );
-
-    if (query.isNotEmpty) {
-      return query.map((json) => Todo.fromJson(json)).toList();
-    } else {
-      return null;
-    }
-  }
-
-  // Completed Stared Todos
-  Future<List<Todo>?> completedStaredTodos() async {
-    final db = await instance.database;
-
-    final query = await db.query(
-      tableTodos,
-      columns: TodoFields.values,
-      where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
-      orderBy: TodoFields.sortOrder,
-      whereArgs: [1, 1],
+      whereArgs: [1],
     );
 
     if (query.isNotEmpty) {

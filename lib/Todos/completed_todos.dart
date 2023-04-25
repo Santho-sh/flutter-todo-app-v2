@@ -11,8 +11,7 @@ class CompletedTodos extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
 
-    if (appState.completedStaredTodos.isEmpty &&
-        appState.activeUnstaredTodos.isEmpty) {
+    if (appState.completedTodos.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -24,10 +23,10 @@ class CompletedTodos extends StatelessWidget {
       childrenPadding: const EdgeInsets.only(left: 8, right: 8),
       title: const Text("Completed"),
       children: <Widget>[
-        for (var todo in appState.completedStaredTodos)
-          DismissibleTodo(todo: todo),
-        for (var todo in appState.completedUnstaredTodos)
-          DismissibleTodo(todo: todo),
+        for (var todo in appState.completedTodos)
+          if (todo.isImportant) DismissibleTodo(todo: todo),
+        for (var todo in appState.completedTodos)
+          if (!todo.isImportant) DismissibleTodo(todo: todo),
       ],
     );
   }

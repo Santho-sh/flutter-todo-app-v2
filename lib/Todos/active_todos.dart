@@ -10,8 +10,7 @@ class ActiveTodos extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
 
-    if (appState.activeStaredTodos.isEmpty &&
-        appState.activeUnstaredTodos.isEmpty) {
+    if (appState.activeTodos.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -22,18 +21,18 @@ class ActiveTodos extends StatelessWidget {
       onReorder: (oldIndex, newIndex) =>
           appState.changeIndex(oldIndex, newIndex),
       children: [
-        for (var todo in appState.activeStaredTodos)
-          DismissibleTodo(
-            todo: todo,
-            // just to remove error
-            key: ValueKey(todo.id),
-          ),
-        for (var todo in appState.activeUnstaredTodos)
-          DismissibleTodo(
-            todo: todo,
-            // just to remove error
-            key: ValueKey(todo.id),
-          ),
+        for (var todo in appState.activeTodos)
+          if (todo.isImportant)
+            DismissibleTodo(
+              todo: todo,
+              key: ValueKey(todo.id),
+            ),
+        for (var todo in appState.activeTodos)
+          if (!todo.isImportant)
+            DismissibleTodo(
+              todo: todo,
+              key: ValueKey(todo.id),
+            ),
       ],
     );
   }
