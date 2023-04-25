@@ -51,9 +51,9 @@ class AddTodo extends StatelessWidget {
               actions: [
                 FilledButton.tonal(
                   child: const Text("Add"),
-                  onPressed: () {
+                  onPressed: () async{
                     HapticFeedback.lightImpact();
-                    int added = appState.addTodo(myController.text);
+                    int added = await appState.createTodo(myController.text);
                     Navigator.pop(context, false);
                     if (added == 1) {
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'theme_shared_preferences.dart';
+import 'package:todo_app_v2/database/todo.dart';
+import 'package:todo_app_v2/database/todos_database.dart';
 
 class AppState extends ChangeNotifier {
+  // for dark mode
   late bool _isDark;
   late SharedPreferences prefs;
   late ThemeSharedPreferences themeSharedPreferences;
-
   bool get isDark => _isDark;
 
-  var activeTodos = <String>[];
-  var completedTodos = <String>[];
+  List<Todo> activeStaredTodos = [];
+  List<Todo> activeUnstaredTodos = [];
+  List<Todo> completedStaredTodos = [];
+  List<Todo> completedUnstaredTodos = [];
 
   Color currentTheme = Colors.black;
 
   AppState() {
-    initState();
+    _init();
+  }
+
+  void _init() async {
     _isDark = false;
     themeSharedPreferences = ThemeSharedPreferences();
-    getThemePreferences();
+    await getThemePreferences();
+    getTodos();
   }
 
   set isDark(bool value) {
@@ -32,100 +40,60 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeIndex(oldIndex, newIndex) {
-    if (oldIndex < newIndex) {
-      newIndex--;
-    }
-    final todo = activeTodos.removeAt(oldIndex);
-    activeTodos.insert(newIndex, todo);
+  void getTodos() async {
+    activeStaredTodos =
+        (await TodosDatabase.instance.activeStaredTodos()) ?? [];
+    activeUnstaredTodos =
+        (await TodosDatabase.instance.activeUnstaredTodos()) ?? [];
+    completedStaredTodos =
+        (await TodosDatabase.instance.completedStaredTodos()) ?? [];
+    completedUnstaredTodos =
+        (await TodosDatabase.instance.completedUnstaredTodos()) ?? [];
     notifyListeners();
   }
 
-  void changeCompletedIndex(oldIndex, newIndex) {
-    if (oldIndex < newIndex) {
-      newIndex--;
-    }
-    final todo = completedTodos.removeAt(oldIndex);
-    completedTodos.insert(newIndex, todo);
-    notifyListeners();
+  // reorder list
+  void changeIndex(int oldIndex, int newIndex) {
+    TodosDatabase.instance.reorder(oldIndex, newIndex);
+    getTodos();
   }
 
-  void initState() async {
-    prefs = await SharedPreferences.getInstance();
-    if (prefs.getStringList("activeTodos") != null) {
-      activeTodos = prefs.getStringList("activeTodos")!;
+  // Craete new todo
+  Future<int> createTodo(String task) async {
+    if (task.trim() == '') {
+      return 0;
     }
-    if (prefs.getStringList("completedTodos") != null) {
-      completedTodos = prefs.getStringList("completedTodos")!;
-    }
-    notifyListeners();
+    final lenth = await TodosDatabase.instance.getTotalTodosCount();
+    final todo = Todo(
+      task: task.trim(),
+      isCompleted: false,
+      isImportant: false,
+      sortOrder: lenth,
+    );
+    TodosDatabase.instance.create(todo);
+    getTodos();
+    return 1;
   }
 
-  int addTodo(String todo) {
-    if (todo.trim() != "") {
-      activeTodos.add(todo.trim());
-      prefs.setStringList("activeTodos", activeTodos);
-      notifyListeners();
-      return 1;
-    }
-    return 0;
+  void undoTodo(Todo todo) {
+    TodosDatabase.instance.create(todo);
+    getTodos();
   }
 
-  int addCompletedTodo(String todo) {
-    if (todo.trim() != "") {
-      completedTodos.add(todo.trim());
-      prefs.setStringList("completedTodos", completedTodos);
-      notifyListeners();
-      return 1;
-    }
-    return 0;
+  void deleteTodo(int id) {
+    TodosDatabase.instance.delete(id);
+    getTodos();
   }
 
-  void removeTodo(String todo) {
-    if (activeTodos.contains(todo)) {
-      activeTodos.remove(todo);
-      prefs.setStringList("activeTodos", activeTodos);
-      notifyListeners();
-    } else if (completedTodos.contains(todo)) {
-      completedTodos.remove(todo);
-      prefs.setStringList("completedTodos", completedTodos);
-      notifyListeners();
-    }
+  void changeIsComplete(Todo todo) {
+    TodosDatabase.instance
+        .update(todo.copy(isCompleted: todo.isCompleted ? false : true));
+    getTodos();
   }
 
-  void deleteTodo(String todo) {
-    if (activeTodos.contains(todo)) {
-      activeTodos.remove(todo);
-      prefs.setStringList("activeTodos", activeTodos);
-      notifyListeners();
-    } else if (completedTodos.contains(todo)) {
-      completedTodos.remove(todo);
-      prefs.setStringList("completedTodos", completedTodos);
-      notifyListeners();
-    }
-  }
-
-  void markComplete(todo) {
-    if (activeTodos.contains(todo)) {
-      completedTodos.add(todo);
-      activeTodos.remove(todo);
-
-      prefs.setStringList("activeTodos", activeTodos);
-      prefs.setStringList("completedTodos", completedTodos);
-
-      notifyListeners();
-    }
-  }
-
-  void markUncomplete(todo) {
-    if (completedTodos.contains(todo)) {
-      activeTodos.add(todo);
-      completedTodos.remove(todo);
-
-      prefs.setStringList("activeTodos", activeTodos);
-      prefs.setStringList("completedTodos", completedTodos);
-
-      notifyListeners();
-    }
+  void changeIsImportant(Todo todo) {
+    TodosDatabase.instance
+        .update(todo.copy(isImportant: todo.isImportant ? false : true));
+    getTodos();
   }
 }

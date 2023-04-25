@@ -24,6 +24,13 @@ class TodosDatabase {
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
+  Future<int> getTotalTodosCount() async {
+    final db = await instance.database;
+    final result = await db.rawQuery('SELECT COUNT(*) FROM $tableTodos');
+    final count = Sqflite.firstIntValue(result)!;
+    return count;
+  }
+
   // create todo table
   Future _createDB(Database db, int version) async {
     await db.execute('''
@@ -31,7 +38,8 @@ class TodosDatabase {
         ${TodoFields.id} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${TodoFields.task} TEXT NOT NULL,
         ${TodoFields.isCompleted} BOOLEAN NOT NULL,
-        ${TodoFields.isImportant} BOOLEAN NOT NULL
+        ${TodoFields.isImportant} BOOLEAN NOT NULL,
+        ${TodoFields.sortOrder} INTEGER NOT NULL
       ) 
       ''');
   }
@@ -59,6 +67,46 @@ class TodosDatabase {
     );
   }
 
+  // reorder todos
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    final db = await instance.database;
+
+    if (oldIndex < newIndex) {
+      newIndex--;
+    }
+
+    final query1 = await db.query(
+      tableTodos,
+      columns: TodoFields.values,
+      where: '${TodoFields.sortOrder} = ?',
+      whereArgs: [oldIndex],
+    );
+
+    final query2 = await db.query(
+      tableTodos,
+      columns: TodoFields.values,
+      where: '${TodoFields.sortOrder} = ?',
+      whereArgs: [newIndex],
+    );
+
+    final todo = Todo.fromJson(query1.first);
+    final newIndexTodo = Todo.fromJson(query2.first);
+
+    db.update(
+      tableTodos,
+      newIndexTodo.copy(sortOrder: oldIndex).toJson(),
+      where: '${TodoFields.sortOrder} = ?',
+      whereArgs: [newIndex],
+    );
+
+    db.update(
+      tableTodos,
+      todo.copy(sortOrder: newIndex).toJson(),
+      where: '${TodoFields.id} = ?',
+      whereArgs: [todo.id],
+    );
+  }
+
   // delete todo
   Future delete(int id) async {
     final db = await instance.database;
@@ -75,6 +123,7 @@ class TodosDatabase {
       tableTodos,
       columns: TodoFields.values,
       where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
+      orderBy: TodoFields.sortOrder,
       whereArgs: [0, 0],
     );
 
@@ -93,6 +142,7 @@ class TodosDatabase {
       tableTodos,
       columns: TodoFields.values,
       where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
+      orderBy: TodoFields.sortOrder,
       whereArgs: [0, 1],
     );
 
@@ -111,6 +161,7 @@ class TodosDatabase {
       tableTodos,
       columns: TodoFields.values,
       where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
+      orderBy: TodoFields.sortOrder,
       whereArgs: [1, 0],
     );
 
@@ -129,6 +180,7 @@ class TodosDatabase {
       tableTodos,
       columns: TodoFields.values,
       where: '${TodoFields.isCompleted} = ? AND ${TodoFields.isImportant} = ?',
+      orderBy: TodoFields.sortOrder,
       whereArgs: [1, 1],
     );
 

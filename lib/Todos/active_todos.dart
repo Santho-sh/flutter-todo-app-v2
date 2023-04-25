@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../App State/app_state.dart';
-import '../Todo Actions/slide_left_background.dart';
-import 'package:flutter/services.dart';
+import 'dismissible_todo.dart';
 
 class ActiveTodos extends StatelessWidget {
   const ActiveTodos({super.key});
@@ -10,9 +9,9 @@ class ActiveTodos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
-    final ColorScheme colors = Theme.of(context).colorScheme;
 
-    if (appState.activeTodos.isEmpty) {
+    if (appState.activeStaredTodos.isEmpty &&
+        appState.activeUnstaredTodos.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -23,61 +22,17 @@ class ActiveTodos extends StatelessWidget {
       onReorder: (oldIndex, newIndex) =>
           appState.changeIndex(oldIndex, newIndex),
       children: [
-        for (var activeTodo in appState.activeTodos)
-          Dismissible(
-            background: const SlideLeftBackground(),
-            key: UniqueKey(),
-            direction: DismissDirection.endToStart,
-            onDismissed: (_) {
-              HapticFeedback.mediumImpact();
-              appState.removeTodo(activeTodo);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: colors.secondary,
-                  content: Text(
-                    "Task deleted",
-                    style: TextStyle(color: colors.onSecondary),
-                  ),
-                  action: SnackBarAction(
-                    label: "UNDO",
-                    onPressed: () async {
-                      appState.addTodo(activeTodo);
-                    },
-                  ),
-                ),
-              );
-            },
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1, color: colors.background),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              tileColor: colors.secondary,
-              key: UniqueKey(),
-              leading: Radio(
-                value: false,
-                groupValue: true,
-                toggleable: true,
-                onChanged: (bool? newValue) => {
-                  appState.markComplete(activeTodo),
-                  HapticFeedback.lightImpact()
-                },
-              ),
-              title: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      activeTodo,
-                      style: TextStyle(color: colors.onSecondary),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => {HapticFeedback.mediumImpact()},
-                    icon: const Icon(Icons.star_border_rounded),
-                  )
-                ],
-              ),
-            ),
+        for (var todo in appState.activeStaredTodos)
+          DismissibleTodo(
+            todo: todo,
+            // just to remove error
+            key: ValueKey(todo.id),
+          ),
+        for (var todo in appState.activeUnstaredTodos)
+          DismissibleTodo(
+            todo: todo,
+            // just to remove error
+            key: ValueKey(todo.id),
           ),
       ],
     );
