@@ -29,29 +29,26 @@ class AddTodo extends StatelessWidget {
             return AlertDialog(
               backgroundColor: colors.secondary,
               scrollable: true,
-              title: const Text("New Task"),
-              content: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Form(
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        autocorrect: true,
-                        autofocus: true,
-                        controller: myController,
-                        decoration: const InputDecoration(
-                          labelText: "Task",
-                          icon: Icon(Icons.add_circle_outline),
-                        ),
+              // title: const Text("Add new task"),
+              content: Form(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      autocorrect: true,
+                      autofocus: true,
+                      controller: myController,
+                      decoration: const InputDecoration(
+                        labelText: "New Task",
+                        icon: Icon(Icons.add_circle_outline),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               actions: [
                 FilledButton.tonal(
                   child: const Text("Add"),
-                  onPressed: () async{
+                  onPressed: () async {
                     HapticFeedback.lightImpact();
                     int added = await appState.createTodo(myController.text);
                     Navigator.pop(context, false);
