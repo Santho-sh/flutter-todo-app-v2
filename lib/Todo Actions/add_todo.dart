@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../App State/app_state.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class AddTodo extends StatelessWidget {
   const AddTodo({super.key});
@@ -20,7 +21,8 @@ class AddTodo extends StatelessWidget {
         size: 35,
       ),
       onPressed: () {
-        showDialog(
+        showAnimatedDialog(
+          barrierDismissible: true,
           context: context,
           builder: (BuildContext context) {
             // variable to store input textfield data
