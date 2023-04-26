@@ -20,7 +20,7 @@ class DismissibleTodo extends StatelessWidget {
       direction: DismissDirection.endToStart,
       onDismissed: (_) {
         HapticFeedback.mediumImpact();
-        appState.deleteTodo(todo.id!);
+        appState.deleteTodo(todo);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: colors.secondary,
@@ -64,7 +64,11 @@ class DismissibleTodo extends StatelessWidget {
             IconButton(
               color: colors.primary,
               onPressed: () => {
-                appState.changeIsImportant(todo),
+                appState.changeIsImportant(
+                    todo,
+                    todo.isCompleted
+                        ? appState.completedTodos
+                        : appState.activeTodos),
                 HapticFeedback.mediumImpact(),
               },
               icon: todo.isImportant

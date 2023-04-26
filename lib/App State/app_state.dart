@@ -38,48 +38,37 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // get todos from db
   void getTodos() async {
     activeTodos = (await TodosDatabase.instance.activeTodos()) ?? [];
     completedTodos = (await TodosDatabase.instance.completedTodos()) ?? [];
-
-    for (var to in activeTodos) {
-      print(to.task);
-      print(to.sortOrder);
-    }
-    print('-------------');
-    for (var to in completedTodos) {
-      print(to.task);
-      print(to.sortOrder);
-    }
     notifyListeners();
   }
 
-  // reorder list
-  void changeIndex(int oldIndex, int newIndex, List<Todo> list) {
+  // reorder active todos
+  void changeIndex(int oldIndex, int newIndex) async {
     if (newIndex > oldIndex) {
       newIndex -= 1;
     }
-    final item = list.removeAt(oldIndex);
-    list.insert(newIndex, item);
+    final item = activeTodos.removeAt(oldIndex);
+    activeTodos.insert(newIndex, item);
+    notifyListeners();
 
-    TodosDatabase.instance.reorder(list);
-  }
-
-  // Change: Important or not
-  void changeIsImportant(Todo todo) async {
-    await TodosDatabase.instance
-        .update(todo.copy(isImportant: !todo.isImportant));
-
-    if (!todo.isCompleted) {
-      changeIndex(todo.sortOrder, 0, activeTodos);
-    } else {
-      changeIndex(todo.sortOrder, 0, completedTodos);
-    }
-
+    await TodosDatabase.instance.reorder(activeTodos);
     getTodos();
   }
 
-  // Craete new todo
+  // change IsImportant value
+  void changeIsImportant(Todo todo, List<Todo> list) async {
+    final index = todo.isImportant ? list.length - 1 : 0;
+    final item = list.removeAt(todo.sortOrder);
+
+    list.insert(index, item.copy(isImportant: todo.isImportant ? false : true));
+    await TodosDatabase.instance.reorder(list);
+    getTodos();
+  }
+
+  // Craete new todo on top
   Future<int> createTodo(String task) async {
     if (task.trim() == '') {
       return 0;
@@ -89,23 +78,37 @@ class AppState extends ChangeNotifier {
       task: task.trim(),
       isCompleted: false,
       isImportant: false,
-      sortOrder: activeTodos.length,
+      sortOrder: 0,
     );
+    activeTodos.insert(0, todo);
+    notifyListeners();
+
     await TodosDatabase.instance.create(todo);
+    await TodosDatabase.instance.reorder(activeTodos);
     getTodos();
     return 1;
   }
 
-  void undoTodo(Todo todo) {
-    TodosDatabase.instance.create(todo);
+  // undo todo
+  void undoTodo(Todo todo) async {
+    await TodosDatabase.instance.create(todo);
     getTodos();
   }
 
-  void deleteTodo(int id) {
-    TodosDatabase.instance.delete(id);
+  // delete todo
+  void deleteTodo(Todo todo) async {
+    await TodosDatabase.instance.delete(todo.id!);
+    if (todo.isCompleted) {
+      completedTodos.remove(todo);
+      await TodosDatabase.instance.reorder(completedTodos);
+    } else {
+      activeTodos.remove(todo);
+      await TodosDatabase.instance.reorder(activeTodos);
+    }
     getTodos();
   }
 
+  // change IsCompleted value
   void changeIsComplete(Todo todo) async {
     if (activeTodos.contains(todo)) {
       completedTodos.add(todo.copy(isCompleted: true));
