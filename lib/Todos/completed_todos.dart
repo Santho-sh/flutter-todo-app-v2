@@ -23,10 +23,7 @@ class CompletedTodos extends StatelessWidget {
       childrenPadding: const EdgeInsets.only(left: 8, right: 8),
       title: const Text("Completed"),
       children: <Widget>[
-        for (var todo in appState.completedTodos)
-          if (todo.isImportant) DismissibleTodo(todo: todo),
-        for (var todo in appState.completedTodos)
-          if (!todo.isImportant) DismissibleTodo(todo: todo),
+        for (var todo in appState.completedTodos) DismissibleTodo(todo: todo),
       ],
     );
   }

@@ -24,13 +24,6 @@ class TodosDatabase {
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  Future<int> getTotalTodosCount() async {
-    final db = await instance.database;
-    final result = await db.rawQuery('SELECT COUNT(*) FROM $tableTodos');
-    final count = Sqflite.firstIntValue(result)!;
-    return count;
-  }
-
   // create todo table
   Future _createDB(Database db, int version) async {
     await db.execute('''
@@ -68,43 +61,19 @@ class TodosDatabase {
   }
 
   // reorder todos
-  Future<void> reorder(int oldIndex, int newIndex) async {
+  Future<void> reorder(List<Todo> todos) async {
     final db = await instance.database;
 
-    if (oldIndex < newIndex) {
-      newIndex--;
+    for (int i = 0; i < todos.length; i++) {
+      final todo = todos[i];
+
+      await db.update(
+        tableTodos,
+        todo.copy(sortOrder: i).toJson(),
+        where: '${TodoFields.id} = ?',
+        whereArgs: [todo.id],
+      );
     }
-
-    final query1 = await db.query(
-      tableTodos,
-      columns: TodoFields.values,
-      where: '${TodoFields.sortOrder} = ?',
-      whereArgs: [newIndex],
-    );
-
-    final query2 = await db.query(
-      tableTodos,
-      columns: TodoFields.values,
-      where: '${TodoFields.sortOrder} = ?',
-      whereArgs: [oldIndex],
-    );
-
-    final newIndexTodo = Todo.fromJson(query1.first);
-    final oldIndexTodo = Todo.fromJson(query2.first);
-
-    await db.update(
-      tableTodos,
-      newIndexTodo.copy(sortOrder: oldIndex).toJson(),
-      where: '${TodoFields.sortOrder} = ?',
-      whereArgs: [oldIndex],
-    );
-
-    await db.update(
-      tableTodos,
-      oldIndexTodo.copy(sortOrder: newIndex).toJson(),
-      where: '${TodoFields.sortOrder} = ?',
-      whereArgs: [newIndex],
-    );
   }
 
   // delete todo

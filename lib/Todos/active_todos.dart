@@ -19,20 +19,13 @@ class ActiveTodos extends StatelessWidget {
       shrinkWrap: true,
       padding: const EdgeInsets.only(left: 8, right: 8),
       onReorder: (oldIndex, newIndex) =>
-          appState.changeIndex(oldIndex, newIndex),
+          appState.changeIndex(oldIndex, newIndex, appState.activeTodos),
       children: [
         for (var todo in appState.activeTodos)
-          if (todo.isImportant)
-            DismissibleTodo(
-              todo: todo,
-              key: ValueKey(todo.id),
-            ),
-        for (var todo in appState.activeTodos)
-          if (!todo.isImportant)
-            DismissibleTodo(
-              todo: todo,
-              key: ValueKey(todo.id),
-            ),
+          DismissibleTodo(
+            todo: todo,
+            key: ValueKey(todo.id),
+          ),
       ],
     );
   }

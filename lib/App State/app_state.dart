@@ -40,14 +40,42 @@ class AppState extends ChangeNotifier {
 
   void getTodos() async {
     activeTodos = (await TodosDatabase.instance.activeTodos()) ?? [];
-    completedTodos =
-        (await TodosDatabase.instance.completedTodos()) ?? [];
+    completedTodos = (await TodosDatabase.instance.completedTodos()) ?? [];
+
+    for (var to in activeTodos) {
+      print(to.task);
+      print(to.sortOrder);
+    }
+    print('-------------');
+    for (var to in completedTodos) {
+      print(to.task);
+      print(to.sortOrder);
+    }
     notifyListeners();
   }
 
   // reorder list
-  void changeIndex(int oldIndex, int newIndex) {
-    TodosDatabase.instance.reorder(oldIndex, newIndex);
+  void changeIndex(int oldIndex, int newIndex, List<Todo> list) {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    final item = list.removeAt(oldIndex);
+    list.insert(newIndex, item);
+
+    TodosDatabase.instance.reorder(list);
+  }
+
+  // Change: Important or not
+  void changeIsImportant(Todo todo) async {
+    await TodosDatabase.instance
+        .update(todo.copy(isImportant: !todo.isImportant));
+
+    if (!todo.isCompleted) {
+      changeIndex(todo.sortOrder, 0, activeTodos);
+    } else {
+      changeIndex(todo.sortOrder, 0, completedTodos);
+    }
+
     getTodos();
   }
 
@@ -56,14 +84,14 @@ class AppState extends ChangeNotifier {
     if (task.trim() == '') {
       return 0;
     }
-    final lenth = await TodosDatabase.instance.getTotalTodosCount();
+
     final todo = Todo(
       task: task.trim(),
       isCompleted: false,
       isImportant: false,
-      sortOrder: lenth,
+      sortOrder: activeTodos.length,
     );
-    TodosDatabase.instance.create(todo);
+    await TodosDatabase.instance.create(todo);
     getTodos();
     return 1;
   }
@@ -78,15 +106,19 @@ class AppState extends ChangeNotifier {
     getTodos();
   }
 
-  void changeIsComplete(Todo todo) {
-    TodosDatabase.instance
-        .update(todo.copy(isCompleted: todo.isCompleted ? false : true));
-    getTodos();
-  }
+  void changeIsComplete(Todo todo) async {
+    if (activeTodos.contains(todo)) {
+      completedTodos.add(todo.copy(isCompleted: true));
+      activeTodos.remove(todo);
+    } else {
+      activeTodos.add(todo.copy(isCompleted: false));
+      completedTodos.remove(todo);
+    }
+    await TodosDatabase.instance
+        .update(todo.copy(isCompleted: !todo.isCompleted));
+    await TodosDatabase.instance.reorder(activeTodos);
+    await TodosDatabase.instance.reorder(completedTodos);
 
-  void changeIsImportant(Todo todo) {
-    TodosDatabase.instance
-        .update(todo.copy(isImportant: todo.isImportant ? false : true));
     getTodos();
   }
 }
