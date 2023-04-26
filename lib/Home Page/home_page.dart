@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'todos_list_view.dart';
 import 'package:todo_app_v2/App State/app_state.dart';
 import 'package:todo_app_v2/Todo Actions/add_todo.dart';
+import 'package:day_night_switcher/day_night_switcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,18 +27,18 @@ class _HomePageState extends State<HomePage> {
             title: const Text('To Do'),
             titleSpacing: 30,
             actions: [
-              IconButton(
-                  style: const ButtonStyle(
-                      padding:
-                          MaterialStatePropertyAll(EdgeInsets.only(right: 30))),
-                  onPressed: () => {
-                        themeNotifier.isDark =
-                            themeNotifier.isDark ? false : true,
-                        HapticFeedback.lightImpact(),
-                      },
-                  icon: themeNotifier.isDark
-                      ? const Icon(Icons.wb_sunny_outlined)
-                      : const Icon(Icons.mode_night_outlined))
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: DayNightSwitcherIcon(
+                  dayBackgroundColor: colors.primaryContainer,
+                  isDarkModeEnabled: themeNotifier.isDark,
+                  onStateChanged: (isDarkModeEnabled) {
+                    setState(() {
+                      themeNotifier.isDark = !themeNotifier.isDark;
+                    });
+                  },
+                ),
+              ),
             ],
           ),
           body: const Todos(),

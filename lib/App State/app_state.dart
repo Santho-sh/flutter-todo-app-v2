@@ -14,8 +14,6 @@ class AppState extends ChangeNotifier {
   List<Todo> activeTodos = [];
   List<Todo> completedTodos = [];
 
-  Color currentTheme = Colors.black;
-
   AppState() {
     _init();
   }

@@ -48,6 +48,8 @@ dependencies:
   flutter_svg: ^2.0.5
   sqflite: ^2.2.7
   flutter_animated_dialog: ^2.0.1
+  animated_theme_switcher: ^2.0.8
+  day_night_switcher: ^0.2.0+1
 
 flutter_icons:
   image_path: "assets/icon.png"
