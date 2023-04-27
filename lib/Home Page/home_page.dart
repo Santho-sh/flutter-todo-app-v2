@@ -18,8 +18,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
-    return Consumer(
-      builder: (context, AppState themeNotifier, child) {
+    return Consumer<AppState>(
+      builder: (context, themeNotifier, child) {
         return Scaffold(
           appBar: AppBar(
             foregroundColor: colors.primary,
@@ -33,9 +33,7 @@ class _HomePageState extends State<HomePage> {
                   dayBackgroundColor: colors.primaryContainer,
                   isDarkModeEnabled: themeNotifier.isDark,
                   onStateChanged: (isDarkModeEnabled) {
-                    setState(() {
-                      themeNotifier.isDark = !themeNotifier.isDark;
-                    });
+                    themeNotifier.isDark = isDarkModeEnabled;
                   },
                 ),
               ),
